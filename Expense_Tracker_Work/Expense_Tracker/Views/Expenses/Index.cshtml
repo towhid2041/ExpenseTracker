@@ -1,0 +1,91 @@
+﻿@model PagedList.IPagedList<Expense_Tracker.Models.DbModel.Expense>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p class="text-right btn-s">
+    @Html.ActionLink("Create New", "Create", new { }, new { @class = "btn btn-primary btn-sm" })
+</p>
+
+
+
+@*@using (Html.BeginForm("Index", "Expenses", FormMethod.Get))
+    {
+        var fromDate = ViewBag.fromDate as DateTime?;
+        var toDate = ViewBag.toDate as DateTime?;
+
+        <p>
+            From Date: @Html.TextBox("fromDate", fromDate == null ? "" : string.Format("{0:dd MMM yyy}", fromDate.Value), new { @class = "datepicker" })
+
+            To Date: @Html.TextBox("toDate", toDate == null ? "" : string.Format("{0:dd MMM yyy}", toDate.Value), new { @class = "datepicker" })
+            <input type="submit" value="Search" />
+        </p>
+
+    }*@
+
+@using (Html.BeginForm("Index", "Expenses", FormMethod.Get))
+{
+    <p>
+        Find by name: @Html.TextBox("searchString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search" />
+    </p>
+}
+
+<table class="table table-bordered active">
+    <tr>
+        <th>
+            @Html.ActionLink("Expense Name", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("Expense Date", "Index", new { sortOrder = ViewBag.DateSortParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            Amount
+        </th>
+        <th>Action</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.CategoryName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExpanseDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Amount)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-primary btn-sm" })
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-danger btn-sm" })
+            </td>
+        </tr>
+    }
+
+</table>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+
+@*@section Scripts {
+        <script src="~/Scripts/jquery-ui-1.13.0.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $(".datepicker").datepicker({
+                    dateFormat: "dd-mm-yy",
+                    changemonth: true,
+                    changeyear: true,
+                    maxDate: 0
+                });
+            });
+        </script>
+    }*@
